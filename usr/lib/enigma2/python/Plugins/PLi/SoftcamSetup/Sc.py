@@ -11,6 +11,7 @@
 from . import _
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
+
 from Components.FileList import FileEntryComponent, FileList
 from Components.MenuList import MenuList
 from Components.ActionMap import ActionMap, NumberActionMap
@@ -29,6 +30,24 @@ from GlobalActions import globalActionMap
 from Tools import Notifications
 import keymapparser
 import os.path
+
+REFRESH = 0
+CCCAMINFO = 1
+OSCAMINFO = 2
+
+ISCCCAMINFO = None
+ISOSCAMINFO = None
+
+try:
+	from Screens.CCcamInfo import CCcamInfoMain
+	ISCCCAMINFO = True
+except:
+	pass
+try:
+	from Screens.OScamInfo import OscamInfoMenu
+	ISOSCAMINFO = True
+except:
+	pass
 
 PACKAGE_PATH = os.path.dirname(str((globals())["__file__"]))
 KEYMAPPINGS = {"green": os.path.join(PACKAGE_PATH, "keymap-green.xml"), "help": os.path.join(PACKAGE_PATH, "keymap-help.xml"), "text": os.path.join(PACKAGE_PATH, "keymap-text.xml"), "red": os.path.join(PACKAGE_PATH, "keymap-red.xml"), "yellow": os.path.join(PACKAGE_PATH, "keymap-yellow.xml")}
@@ -59,16 +78,18 @@ class ScNewSelection(Screen):
 			<screen name="ScNewSelection" position="center,center" size="670,520" title="Softcam Setup">
 				<widget name="cam" zPosition="2" position="5,5" size="310,21" font="Regular; 17" halign="left" foregroundColor="#00bab329" />
 				<widget name="server" zPosition="2" position="320,5" size="328,21" font="Regular; 17" halign="left" foregroundColor="#00bab329" />
-				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup//images/div-h.png" position="0,30" zPosition="2" size="650,2" />
+				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/div-h.png" position="0,30" zPosition="2" size="650,2" />
 				<widget name="entries" position="5,35" size="630,200" />
-				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup//images/div-h.png" position="0,235" zPosition="2" size="650,2" />
+				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/div-h.png" position="0,235" zPosition="2" size="650,2" />
 				<widget name="text" position="5,240" size="345,260" zPosition="2"  font="Regular;17" />
 				<widget name="text1" position="350,240" size="320,260" zPosition="2"  font="Regular;17" />
-				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup//images/div-h.png" position="0,470" zPosition="2" size="650,2" />
-				<ePixmap position="150,510" zPosition="1" size="170,2" pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/red.png" transparent="1" alphatest="on" />
-				<ePixmap position="400,510" zPosition="1" size="170,2" pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/green.png" transparent="1" alphatest="on" />
-				<widget name="key_red" position="150,480" zPosition="2" size="170,25" valign="center" halign="center" font="Regular;21" transparent="1" />
-				<widget name="key_green" position="400,480" zPosition="2" size="170,25" valign="center" halign="center" font="Regular;21" transparent="1" />
+				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/div-h.png" position="0,470" zPosition="2" size="650,2" />
+				<ePixmap position="150,510" zPosition="1" size="150,2" pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/red.png" transparent="1" alphatest="on" />
+				<ePixmap position="300,510" zPosition="1" size="150,2" pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/green.png" transparent="1" alphatest="on" />
+				<ePixmap position="450,510" zPosition="1" size="150,2" pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/blue.png" transparent="1" alphatest="on" />
+				<widget name="key_red" position="150,480" zPosition="2" size="150,25" valign="center" halign="center" font="Regular;21" transparent="1" />
+				<widget name="key_green" position="300,480" zPosition="2" size="150,25" valign="center" halign="center" font="Regular;21" transparent="1" />
+				<widget name="key_blue" position="450,480" zPosition="2" size="150,25" valign="center" halign="center" font="Regular;21" transparent="1" />
 				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup//images/key_menu.png" position="20,480" zPosition="2" size="50,40" alphatest="on" />
 			</screen>"""	
 	else:
@@ -76,15 +97,18 @@ class ScNewSelection(Screen):
 			<screen name="ScNewSelection" position="center,center" size="650,270" title="Softcam Setup">
 				<widget name="cam" zPosition="2" position="5,5" size="310,21" font="Regular; 17" halign="left" foregroundColor="#00bab329" />
 				<widget name="server" zPosition="2" position="320,5" size="328,21" font="Regular; 17" halign="left" foregroundColor="#00bab329" />
-				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup//images/div-h.png" position="0,30" zPosition="2" size="650,2" />
+				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/div-h.png" position="0,30" zPosition="2" size="650,2" />
 				<widget name="entries" position="5,35" size="630,180" />
 				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup//images/div-h.png" position="0,215" zPosition="2" size="650,2" />
-				<ePixmap position="150,260" zPosition="1" size="170,2" pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/red.png" transparent="1" alphatest="on" />
-				<ePixmap position="400,260" zPosition="1" size="170,2" pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/green.png" transparent="1" alphatest="on" />
-				<widget name="key_red" position="150,230" zPosition="2" size="170,25" valign="center" halign="center" font="Regular;21" transparent="1" />
-				<widget name="key_green" position="400,230" zPosition="2" size="170,25" valign="center" halign="center" font="Regular;21" transparent="1" />
-				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup//images/key_menu.png" position="20,230" zPosition="2" size="50,40" alphatest="on" />
+				<ePixmap position="150,260" zPosition="1" size="150,2" pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/red.png" transparent="1" alphatest="on" />
+				<ePixmap position="300,260" zPosition="1" size="150,2" pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/green.png" transparent="1" alphatest="on" />
+				<ePixmap position="450,260" zPosition="1" size="150,2" pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/blue.png" transparent="1" alphatest="on" />
+				<widget name="key_red" position="150,230" zPosition="2" size="150,25" valign="center" halign="center" font="Regular;21" transparent="1" />
+				<widget name="key_green" position="300,230" zPosition="2" size="150,25" valign="center" halign="center" font="Regular;21" transparent="1" />
+				<widget name="key_blue" position="450,230" zPosition="2" size="150,25" valign="center" halign="center" font="Regular;21" transparent="1" />
+				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/PLi/SoftcamSetup/images/key_menu.png" position="20,230" zPosition="2" size="50,40" alphatest="on" />
 			</screen>"""
+			
 	def __init__(self, session):
 		Screen.__init__(self, session)
 
@@ -96,6 +120,7 @@ class ScNewSelection(Screen):
 				"ok": self.ok,
 				"green": self.save,
 				"red": self.cancel,
+				"blue": self.bluekey,
 				"menu": self.keyMenu,
 			},-1)
 			
@@ -110,6 +135,7 @@ class ScNewSelection(Screen):
 			
 		self.softcam = CamControl('softcam')
 		self.cardserver = CamControl('cardserver')
+		self.blueAction = REFRESH
 		
 		self["entries"] = ConfigList([])
 		self.initConfig()
@@ -117,6 +143,7 @@ class ScNewSelection(Screen):
 		
 		self["key_red"] = Label(_("Cancel"))
 		self["key_green"] = Label(_("OK"))
+		self["key_blue"] = Label(_("Refresh"))
 		self["cam"] = Label()
 		self["server"] = Label()
 		
@@ -138,6 +165,7 @@ class ScNewSelection(Screen):
 		self.softcams = ConfigSelection(choices = self.softcam.getList())
 		self.cfg_autocam = getConfigListEntry(_("Enable Auto-Camd"), config.plugins.SoftcamSetup.autocam.enabled)
 		self.cfg_checkrec = getConfigListEntry(_("Don't switch auto-camd while recording"), config.plugins.SoftcamSetup.autocam.checkrec)
+		self.cfg_switchinfo = getConfigListEntry(_("Show (switch info camname)"), config.plugins.SoftcamSetup.autocam.switchinfo)
 		self.cfg_aclsetup = getConfigListEntry(_("Setup Auto-Camd List"), ConfigAction(self.setupAutoCamList, None))
 
 	def createConfig(self):
@@ -168,6 +196,7 @@ class ScNewSelection(Screen):
 			self.softcams.value = config.plugins.SoftcamSetup.autocam.defcam.value
 			list.append(getConfigListEntry(_("Default Camd"), self.softcams))
 			list.append(self.cfg_checkrec)
+			list.append(self.cfg_switchinfo)
 			list.append(self.cfg_aclsetup)
 		if cardservers:
 			self.cardservers = ConfigSelection(choices = cardservers)
@@ -202,7 +231,7 @@ class ScNewSelection(Screen):
 				msg = _("Please wait, restarting softcam and cardserver.")
 			else:
 				msg  = _("Please wait, restarting softcam.")
-                elif "c" in what:
+		elif "c" in what:
 			msg = _("Please wait, restarting cardserver.")
 		self.mbox = self.session.open(MessageBox, msg, MessageBox.TYPE_INFO)
 		self.activityTimer = eTimer()
@@ -225,7 +254,7 @@ class ScNewSelection(Screen):
 		self.activityTimer.stop()
 		del self.activityTimer 
 		if "c" in self.what:
-                        self.cardserver.select(self.cardservers.value)
+			self.cardserver.select(self.cardservers.value)
 			self.cardserver.command('start')
 		if "s" in self.what:
 			self.softcam.select(self.softcams.value)
@@ -250,11 +279,11 @@ class ScNewSelection(Screen):
 	def save(self):
 		what = ''
 		if hasattr(self, 'cardservers') and (self.cardservers.value != self.cardserver.current()):
-                        what = 'sc'
+			what = 'sc'
 		elif self.softcams.value != self.softcam.current():
-                        what = 's'
-                if what:
-                	self.restart(what)
+			what = 's'
+		if what:
+			self.restart(what)
 		else:
 			self.close()
 
@@ -274,6 +303,7 @@ class ScNewSelection(Screen):
 		else:
 			name = ""
 		self["cam"].setText(name)
+		self.setblueKey(name)
 			
 	def nameCardserver(self):
 		if fileExists("/etc/init.d/cardserver"):
@@ -330,6 +360,34 @@ class ScNewSelection(Screen):
 		from autocam import AutoCamListSetup
 		self.session.open(AutoCamListSetup, self.softcam)
 
+	def bluekey(self):
+		if self.blueAction == CCCAMINFO:
+			self.session.openWithCallback(self.CCcamInfoCallback, CCcamInfoMain)
+		elif self.blueAction == OSCAMINFO:
+			self.session.openWithCallback(self.CCcamInfoCallback, OscamInfoMenu)
+		else:
+			self.nameSoftcam()
+			self.nameCardserver()
+
+	def CCcamInfoCallback(self):
+		pass
+		
+	def setblueKey(self, cam):
+		print"[SOFTCAM] setblueKey=%s<" %cam
+		if cam == None or cam == '':
+			self.blueAction = REFRESH
+			self["key_blue"].setText(_("Refresh"))
+			return
+		pretxt = _("Current softcam: ")
+		if cam.upper().startswith(pretxt.upper() + 'CCCAM') and ISCCCAMINFO:
+			self.blueAction = CCCAMINFO
+			self["key_blue"].setText(_("CCcamInfo"))
+		elif cam.upper().startswith(pretxt.upper() + 'OSCAM') and ISOSCAMINFO:
+			self.blueAction = OSCAMINFO
+			self["key_blue"].setText(_("OscamInfo"))
+		else:
+			self.blueAction = REFRESH
+			self["key_blue"].setText(_("Refresh"))
 
 class ScSetupScreen(Screen, ConfigListScreen):
 	skin = """

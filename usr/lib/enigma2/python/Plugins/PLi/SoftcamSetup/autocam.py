@@ -278,6 +278,7 @@ class AutoCamServiceSetup(ChannelSelectionBase):
 	def __init__(self, session, providers=False):
 		self.providers = providers
 		ChannelSelectionBase.__init__(self, session)
+		self.bouquet_mark_edit = OFF
 		from Components.ActionMap import ActionMap
 		self["actions"] = ActionMap(["OkCancelActions", "TvRadioActions"], {"cancel": self.close, "ok": self.channelSelected, "keyRadio": self.setModeRadio, "keyTV": self.setModeTv})
 		self.onLayoutFinish.append(self.setModeTv)
@@ -320,8 +321,9 @@ def restartAutocam(self, cam, pip=False):
 		timer.stop()
 		self.camCtrl.select(cam)
 		self.camCtrl.command('start')
-		if msgbox:
-			msgbox.close()
+		if config.plugins.SoftcamSetup.autocam.switchinfo.value:
+                        if msgbox:
+			        msgbox.close()
 		if pip:
 			if not self.session.pip.playService(oldref):
 				self.session.pip.playService(None)
@@ -335,9 +337,10 @@ def restartAutocam(self, cam, pip=False):
 	self.session.nav.stopService()
 	
 	self.hide()
-	from Screens.MessageBox import MessageBox
-	msgbox = self.session.open(MessageBox, _("Switch camd:\n '%s' to '%s'")%(self.camCtrl.current(), cam), MessageBox.TYPE_INFO)
-	msgbox.setTitle(_("Auto-Camd"))
+	if config.plugins.SoftcamSetup.autocam.switchinfo.value:
+                from Screens.MessageBox import MessageBox
+	        msgbox = self.session.open(MessageBox, _("Switch camd:\n '%s' to '%s'")%(self.camCtrl.current(), cam), MessageBox.TYPE_INFO)
+	        msgbox.setTitle(_("Auto-Camd"))
 	
 	from enigma import eTimer
 	timer = eTimer()
@@ -346,12 +349,12 @@ def restartAutocam(self, cam, pip=False):
 
 # ChannelSelection setHistoryPath
 defHistoryPath = None
-def hew_setHistoryPath(self):
+def hew_setHistoryPath(self, doZap=True):
 	if not config.plugins.SoftcamSetup.autocam.enabled.value:
-		defHistoryPath(self)
+		defHistoryPath(self, doZap)
 	else:
 		ref = self.session.nav.getCurrentlyPlayingServiceReference()
-		defHistoryPath(self)
+		defHistoryPath(self, doZap)
 		nref = self.session.nav.getCurrentlyPlayingServiceReference()
 		if nref and self.session.pipshown == False:
 		#if nref:
@@ -381,19 +384,19 @@ def hew_setHistoryPath(self):
 
 # ChannelSelection zap
 defZap = None
-def newZap(self, enable_pipzap = False, preview_zap = False):
+def newZap(self, enable_pipzap = False, preview_zap = False, checkParentalControl=True, ref=None):
 	if not config.plugins.SoftcamSetup.autocam.enabled.value:
-		defZap(self, enable_pipzap, preview_zap)
+		defZap(self, enable_pipzap, preview_zap, checkParentalControl, ref)
 	else:
 		nref = self.getCurrentSelection()
 		isPip = enable_pipzap and self.dopipzap
 		if isPip:
-			ref = self.session.pip.getCurrentService()
+			r = self.session.pip.getCurrentService()
 		else:
-			ref = self.session.nav.getCurrentlyPlayingServiceReference()
-		defZap(self, enable_pipzap, preview_zap)
+			r = self.session.nav.getCurrentlyPlayingServiceReference()
+		defZap(self, enable_pipzap, preview_zap, checkParentalControl, ref)
 		if not preview_zap and self.session.pipshown == False: #not self.dopipzap:
-			if ref is None or ref != nref:
+			if r is None or r != nref:
 				if not hasattr(self, 'camCtrl'):
 					from camcontrol import CamControl
 					self.camCtrl = CamControl('softcam')
@@ -425,6 +428,6 @@ def StartMainSession(session):
 	ChannelSelection.zap = newZap
 	if defHistoryPath is None:
 		defHistoryPath = ChannelSelection.setHistoryPath
-#	ChannelSelection.setHistoryPath = hew_setHistoryPath [IQ]
+	ChannelSelection.setHistoryPath = hew_setHistoryPath
 	ChannelSelection.restartAutocam = restartAutocam
 	
