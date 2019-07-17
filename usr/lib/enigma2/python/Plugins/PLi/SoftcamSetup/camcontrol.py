@@ -1,4 +1,5 @@
 import os
+import time
 
 class CamControl:
 	'''CAM convention is that a softlink named /etc/init.c/softcam.* points
@@ -29,6 +30,7 @@ class CamControl:
 		if os.path.exists(self.link):
 			print "Executing", self.link + ' ' + cmd
 			os.system(self.link + ' ' + cmd)
+		time.sleep(1) # guarantee switch softcam time by babel.
 
 	def select(self, which):
 		print "Selecting CAM:", which
